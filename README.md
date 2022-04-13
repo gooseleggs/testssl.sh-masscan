@@ -1,5 +1,13 @@
 # Mass Scan Tools for testssl.sh
-
+ 
+## Update
+This has been updated April 2022 to include the following features
+  - Elastic 7.x support
+  - Testssl.sh 3.1dev version support (April 2022)
+  - Added additional STARTTLS ports
+  - various field updates
+  
+  
 Script collection for generating [testssl.sh](https://testssl.sh/) command lines that can be executed sequentially or in
 parallel with tools like [GNU Parallel](https://www.gnu.org/software/parallel/) and importing the results into a
 structured document in [ElasticSearch](https://www.elastic.co/de/products/elasticsearch) for further analysis.
@@ -22,7 +30,7 @@ Visualize vulnerability distribution:
 
 ## Dependencies
 
-* testssl.sh 2.9dev branch or later version
+* testssl.sh 3.1dev branch or later version
 * Python 3 with following modules:
   * elasticsearch\_dsl
   * tzlocal
