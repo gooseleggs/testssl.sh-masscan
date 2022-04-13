@@ -5,7 +5,7 @@
 import fileinput
 import re
 import argparse
-import sys
+import sys 
 
 argparser = argparse.ArgumentParser(description="Read host:port lines from text import file and create testssl.sh command lines")
 argparser.add_argument("--command", "-c", default="testssl.sh", help="Invocation of testssl.sh")
@@ -18,6 +18,8 @@ starttlsPorts = {
         21: "ftp",
         25: "smtp",
         110: "pop3",
+        143: "imap",
+        587: "smtp"
         }
 #######################################
 
