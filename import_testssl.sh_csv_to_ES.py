@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # Import testssl.sh CSV to ELasticSearch
-
+ 
 import argparse
 from docTestssl import DocTestSSLResult
 from elasticsearch_dsl.connections import connections
