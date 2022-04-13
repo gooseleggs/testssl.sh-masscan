@@ -5,7 +5,7 @@ import argparse
 from docTestssl import DocTestSSLResult
 from elasticsearch_dsl.connections import connections
 from elasticsearch_dsl import Index
-from datetime import datetime 
+from datetime import datetime
 
 argparser = argparse.ArgumentParser(description="Import testssl.sh CSV logs into ElasticSearch")
 argparser.add_argument("--elasticsearch", "-e", nargs="*", default="localhost", help="ElasticSearch host (default: %(default)s)")
