@@ -14,6 +14,7 @@ pp = pprint.PrettyPrinter(indent=4)
 
 tz = get_localzone()
 reDefaultFilename = re.compile("(?:^|/)(?P<ip>\d+\.\d+\.\d+\.\d+)(:(?P<port>\d+))?-(?P<datetime>\d{8}-\d{4})\.csv$")
+reDefaultHostFilename = re.compile("(?:^|/)(?P<hostname>[a-zA-Z.]+)(_p(?P<port>\d+))?-(?P<datetime>\d{8}-\d{4})\.csv$")
 reProtocol = re.compile("^(?:SSLv\\d|TLS\\d(?:_\\d)?)$")
 reCipherTests = re.compile("^cipherlist_(.*)$")
 reIpHostColumn = re.compile("^(.*)/(.*)$")
@@ -103,7 +104,7 @@ class DocTestSSLResult(Document):
     
     source = Keyword(fields={'raw': Keyword()})
     result = Boolean()
-    timestamp = Date()
+#    '@timestamp' = Date()
     ip = Keyword()
     hostname = Keyword()
     port = Integer()
@@ -111,6 +112,7 @@ class DocTestSSLResult(Document):
     svcid = Keyword()
     internal = Boolean()
     protocols = Keyword(multi=True)
+    ksidentifier = Integer()
 
     ciphers = Keyword(multi=True, fields={'raw': Keyword()})
     ciphertests = Keyword(multi=True)
@@ -164,9 +166,17 @@ class DocTestSSLResult(Document):
             m = reIpHostColumn.search(line['fqdn/ip'])
             if m:
                 self.hostname, self.ip = m.groups()
+            
+            # Return if not IP Address is given
+            if self.ip == '':
+                return
+            
             self.port = int(line['port'])
             self.internal = ipaddress.ip_address(self.ip).is_private
-            self.rev_dns = socket.gethostbyaddr(self.ip)[0] 
+            try:
+                self.rev_dns = socket.gethostbyaddr(self.ip)[0]
+            except:
+                print("") 
 
         if reProtocol.search(line['id']) and reOffers.search(line['finding']):     # protocols
             self.result = True
@@ -196,7 +206,7 @@ class DocTestSSLResult(Document):
             m = reDefaultCipher.search(line['finding'])
             if m:
                 self.serverpref.cipher = m.group(1)
-        elif line['id'] == "cert_keySize":                              # certificate key size
+        elif line['id'] == "cert_keySize(?:^|/)(?P<hostname>[a-zA-Z.]+)(_p(?P<port>\d+))?-(?P<datetime>\d{8}-\d{4})\.csv$":                              # certificate key size
             m = reKeySize.search(line['finding'])
             if m:
                 self.cert.keysize = int(m.group(1))
@@ -261,6 +271,7 @@ class DocTestSSLResult(Document):
         elif reGradeCapReason.search(line['id']):
               self.grade.reasons.append(line['finding'])
 
+        self.ksidentifier = (int(ipaddress.ip_address(self.ip)) / 2) + int(self.port)
         if line['severity'] != "OK" and line['severity'] != "INFO":
            m = errors.get(line['id'])
            if m != None:
@@ -278,18 +289,26 @@ class DocTestSSLResult(Document):
 
     def parseCSV(self, csvfile):
         if self.source:
+           
             m = reDefaultFilename.search(self.source)
             if m:
                 self.ip = m.group('ip')
                 self.port = int(m.group('port') or 0)
-                self.timestamp = datetime.strptime(m.group('datetime'), "%Y%m%d-%H%M")
+                self['@timestamp'] = datetime.strptime(m.group('datetime'), "%Y%m%d-%H%M")
+                
+            m = reDefaultHostFilename.search(self.source)
+            if m:
+                self.hostname = m.group('hostname')
+                self.port = int(m.group('port') or 0)
+                self['@timestamp'] = datetime.strptime(m.group('datetime'), "%Y%m%d-%H%M")
         csvReader = csv.DictReader(csvfile, fieldnames=("id", "fqdn/ip", "port", "severity", "finding"), delimiter=',', quotechar='"')
         for line in csvReader:
             self.parseCSVLine(line)
 
     def save(self, **kwargs):
-        if not self.timestamp:
-            self.timestamp = datetime.now(tz)
+        # add a timestamp if not one already
+        if not hasattr(self, '@timestamp'):
+            self['@timestamp'] = datetime.now(tz)
         if not self.port:
             raise ValueError("Empty scan result")
 
