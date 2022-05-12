@@ -6,10 +6,11 @@ from docTestssl import DocTestSSLResult
 from elasticsearch_dsl.connections import connections
 from elasticsearch_dsl import Index
 from datetime import datetime
+from _operator import index
 
 argparser = argparse.ArgumentParser(description="Import testssl.sh CSV logs into ElasticSearch")
-argparser.add_argument("--elasticsearch", "-e", nargs="*", default="localhost", help="ElasticSearch host (default: %(default)s)")
-argparser.add_argument("--index", "-i", default="testssl-scan", help="ElasticSearch index (default: %(default)s)")
+argparser.add_argument("--elasticsearch", "-e", default="127.0.0.1:9200", help="ElasticSearch host (default: %(default)s)")
+argparser.add_argument("--index", "-i", default="testssl-scan-%Y-%M", help="ElasticSearch index (default: %(default)s)")
 argparser.add_argument("--ca_cert", "-c", help="ElasticSearch CA certificate")
 argparser.add_argument("--user", "-u", default="elastic", help="Username")
 argparser.add_argument("--password", "-p", help="Password")
@@ -17,8 +18,12 @@ argparser.add_argument("files", nargs="+", help="List of testssl.sh logs in CSV 
 args = argparser.parse_args()
 
 http_auth = (args.user, args.password)
+dt = datetime.today()
+index = args.index + "-{}-{}".format(dt.year, dt.month)
+print(index)
+exit
 connections.create_connection(hosts=args.elasticsearch,ca_certs=args.ca_cert,use_ssl=True, verify_certs=False, http_auth=http_auth)
-idx = Index(args.index)
+idx = Index(index)
 idx.document(DocTestSSLResult)
 DocTestSSLResult.init()
 try:
