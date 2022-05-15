@@ -20,8 +20,6 @@ args = argparser.parse_args()
 http_auth = (args.user, args.password)
 dt = datetime.today()
 index = args.index + "-{}-{}".format(dt.year, dt.month)
-print(index)
-exit
 connections.create_connection(hosts=args.elasticsearch,ca_certs=args.ca_cert,use_ssl=True, verify_certs=False, http_auth=http_auth)
 idx = Index(index)
 idx.document(DocTestSSLResult)
@@ -39,7 +37,7 @@ for csvFile in csvFiles:
         print("Error while opening %s: %s" % (csvFile, e.strerror))
 
     print("Processing '%s'" % (csvFile))
-    doc = DocTestSSLResult(source=csvFile)
+    doc = DocTestSSLResult(sourcefile=csvFile)
     doc.parseCSV(csv)
     csv.close()
     try:
