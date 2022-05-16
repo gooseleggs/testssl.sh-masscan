@@ -373,6 +373,7 @@ class DocTestSSLResult(Document):
 
     def parseCSV(self, csvfile):
         if self.sourcefile:
+            print("  parsing %s" % self.sourcefile)
             self.log.file.path = self.sourcefile
             m = reDefaultFilename.search(self.sourcefile)
             if m:
@@ -408,7 +409,7 @@ class DocTestSSLResult(Document):
         self.ecs.version = '8.2.0'
 
         #if 'debug' in kwargs and kwargs['debug']:
-        pp.pprint(self.to_dict())
-        return
+#        pp.pprint(self.to_dict())
+#        return
         return super().save()
 #        return 
