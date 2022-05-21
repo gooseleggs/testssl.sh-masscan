@@ -1,32 +1,28 @@
 # Mass Scan Tools for testssl.sh
  
-## Update
-This has been updated April 2022 to include the following features
+
+Script collection for generating [testssl.sh](https://testssl.sh/) command lines that can be executed sequentially or in
+parallel with tools like [GNU Parallel](https://www.gnu.org/software/parallel/) and importing the results into a
+structured document in [ElasticSearch](https://www.elastic.co/de/products/elasticsearch) for further analysis.
+
+This fork provides a number of changes:
   - Elastic 7.x support
   - Testssl.sh 3.1dev version support (April 2022)
   - Added additional STARTTLS ports
   - various field updates
+  - Elastic ECS fields where appropriate
+  - Dashboard for Kibana
+  - Read additional configuration created by gooseleggs/certscan scanning script (such as local/external host)
   
-  
-Script collection for generating [testssl.sh](https://testssl.sh/) command lines that can be executed sequentially or in
-parallel with tools like [GNU Parallel](https://www.gnu.org/software/parallel/) and importing the results into a
-structured document in [ElasticSearch](https://www.elastic.co/de/products/elasticsearch) for further analysis.
 
 This is how the scan result of a service appears in Kibana:
 
 ![testssl.sh scan result viewed in Kibana](Screenshots/Kibana-testssl_sh.png)
 
-Create vulnerability lists:
 
-![Vulnerability list](Screenshots/Kibana-testssl-VulnList.png)
+Dashboard included:
 
-Visualize vulnerability distribution:
-
-![Vulnerability counts](Screenshots/Kibana-testssl-Visualize-Vulns.png)
-
-...or create vulnerability expiration graphs:
-
-![Vulnerability expiration graph](Screenshots/Kibana-testssl-CertExpiration.png)
+![Dashboard](Screenshots/Kibana-testssl-dashboard.png)
 
 ## Dependencies
 
@@ -44,6 +40,10 @@ Visualize vulnerability distribution:
 5. Run `import_testssl.sh_csv_to_ES.py *.csv` to import scan results into ElasticSearch.
 6. View/Analyze data with [Kibana](https://www.elastic.co/de/products/kibana) or the tool of your choice.
 7. Fix your TLS configurations :)
+
+# Known issues
+Due to the way in which Elastic does aggregates, I could not get it to work correctly with returning just the last scan results for the dashboard.  Therefore, if you set the time line to more than a scan interval, the dashboard will show skewed results.  Not sure how to fix this at the moment, but open to suggestions (ie pull requests).
+
 
 ## Useful Command Lines
 
