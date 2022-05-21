@@ -9,7 +9,7 @@ from datetime import datetime
 from _operator import index
 
 argparser = argparse.ArgumentParser(description="Import testssl.sh CSV logs into ElasticSearch")
-argparser.add_argument("--elasticsearch", "-e", default="127.0.0.1:9200", help="ElasticSearch host (default: %(default)s)")
+argparser.add_argument("--elasticsearch", "-e", nargs="*", default="127.0.0.1:9200", help="ElasticSearch host (default: %(default)s)")
 argparser.add_argument("--index", "-i", default="testssl-scan-%Y-%M", help="ElasticSearch index (default: %(default)s)")
 argparser.add_argument("--ca_cert", "-c", help="ElasticSearch CA certificate")
 argparser.add_argument("--user", "-u", default="elastic", help="Username")
