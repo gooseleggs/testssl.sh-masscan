@@ -41,6 +41,8 @@ Dashboard included:
 6. View/Analyze data with [Kibana](https://www.elastic.co/de/products/kibana) or the tool of your choice.
 7. Fix your TLS configurations :)
 
+If you want to not do the above, but instead just provide a list of urls, or scan a network, look at the github project certscan by gooseleggs (https://github.com/gooseleggs/certscan).
+
 # Known issues
 Due to the way in which Elastic does aggregates, I could not get it to work correctly with returning just the last scan results for the dashboard.  Therefore, if you set the time line to more than a scan interval, the dashboard will show skewed results.  Not sure how to fix this at the moment, but open to suggestions (ie pull requests).
 
